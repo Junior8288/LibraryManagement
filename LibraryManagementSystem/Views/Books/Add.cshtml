@@ -1,0 +1,60 @@
+﻿@model LibraryManagementSystem.Models.Book
+@{
+	ViewBag.Title = "Add Book";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+	<div class="col-lg-8 mc-auto">
+		<div class="card">
+			<div class="card-header">
+				<h3>New Book</h3>
+			</div>
+			<div class="card-body">
+				<form asp-action="Add" method="post" enctype="multipart/form-data">
+					@Html.AntiForgeryToken()
+
+					<div class="mb-3">
+						<label asp-for="Title" class ="form-label">Book Title</label>
+						<input asp-for="Title" type="text" class="form-control" placeholder="Enter Book Title" />
+					</div>
+					<div class="mb-3">
+						<label asp-for="Author" class="form-label">Author</label>
+						<input asp-for="Author" type="text" class="form-control" placeholder="Enter Author" />
+					</div>
+					<div class="mb-3">
+						<label asp-for="Category" class="form-label">Category</label>
+						<select asp-for="Category" class="form-select">
+							<option>Select Category</option>
+							<option>Fiction</option>
+							<option>Non-Fiction</option>
+							<option>Programming</option>
+							<option>Software Engineering</option>
+							<option>Web Development</option>
+						</select>
+					</div>
+					<div class="mb-3">
+						<label asp-for="Description" class="form-label">Description</label>
+						<textarea asp-for="Description" class="form-control" rows="4" placeholder="Book Description..."></textarea>
+					</div>
+
+					<div class="mb-3">
+						<label asp-for="ISBN" class="form-label">ISBN</label>
+						<textarea asp-for="ISBN" class="form-control" rows="4" placeholder="987-0=00-00000-0"></textarea>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label">Supporting Documents</label>
+						<input type="file" name="documents" class="form-control" multiple accept=".pdf,.txt,.docx,.xlsx"  ></input>
+						<small class="form-text text-muted">Upload book cover, table pof contents etc</small>
+					</div>
+
+					<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+						<a href="/Books" class="btn btn-secondary me-md-2">Cancel</a>
+						<button type="submit" class="btn btn-primary">Add Book</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

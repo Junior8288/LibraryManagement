@@ -1,0 +1,66 @@
+﻿@model List<LibraryManagementSystem.Models.Book>
+
+@{
+	ViewBag.Title = "My Books";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+	<h2> My Books</h2>
+	<a href="/Books/Add" class="btn btn-primary"> + Add New Book </a>
+</div>
+
+<!--Books Table-->
+<div class="card">
+	<div class="card-body">
+		@if (Model.Count == 0)
+		{
+			<div class="text-center py5">
+				<p class="text-muted" >No books submitted yet</p>
+				<a href="/Book/Add" class="btn btn-primary">Add Your First Book</a>
+			</div>
+		}
+		else
+		{
+			<table class="table">
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Author</th>
+					<th>Category</th>
+					<th>Status</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var book in Model)
+				{
+					<tr>
+						<td><strong>@book.Title</strong></td>
+						<td>@book.Author</td>
+						<td>@book.Category</td>
+						<td>
+								@if (book.Status == LibraryManagementSystem.Models.BookStatus.Pending)
+								{
+									<span class="badge bg-warning text-dark">Pending</span>
+								}
+								else if (book.Status == LibraryManagementSystem.Models.BookStatus.Declined)
+								{
+									<span class="badge bg-danger text-dark">Declined</span>
+								}
+								else 
+								{
+									<span class="badge bg-success text-dark">Approved</span>
+								}
+							</td>
+							<td>
+								<a href="/Books/Details/@book.Id" class="btn btn-sm btn-outline-primary">View Details</a>
+							</td>
+					</tr>	
+				}
+			</tbody>
+		</table>
+		}
+		
+	</div>
+</div>

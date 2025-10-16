@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml"; //added this nav
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2> Books Awaiting Review</h2>
+    <a href="#" class="btn btn-primary">
+        Review Archive
+    </a>
+</div>
+
+@*Hard code - display all books*@
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Title
+                    </th>
+                    <th>
+                        Author
+                    </th>
+                    <th>
+                        Submitted By
+                    </th>
+                    <th>
+                        Category
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Submission Date
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td> Clean Code</td>
+                    <td> Robert Martin</td>
+                    <td> Sam D</td>
+                    <td> Programming</td>
+                    <td><span class="badge bg-warning"> Pending</span></td>
+                    <td> 19/08/2025</td>
+                    <td>
+                        <a href="/Admin/Review/1" class="btn btn-sm btn-outline-primary">
+                            Review
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td> The Bible</td>
+                    <td> God and others</td>
+                    <td> Sizwe M</td>
+                    <td> Religious Texts</td>
+                    <td><span class="badge bg-danger"> Denied</span></td>
+                    <td> 23/08/2025</td>
+                    <td>
+                        <a href="/Admin/Review/2" class="btn btn-sm btn-outline-primary">
+                            Review
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Design Patterns</td>
+                    <td> Gang of Four</td>
+                    <td> Nia C</td>
+                    <td> Software Engineering</td>
+                    <td><span class="badge bg-success "> Approved</span></td>
+                    <td> 16/08/2025</td>
+                    <td>
+                        <a href="/Admin/Review/3" class="btn btn-sm btn-outline-primary">
+                            Review
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Javascript for Dummies</td>
+                    <td> Mozilla Foundation</td>
+                    <td> Annie PC</td>
+                    <td> Web Development</td>
+                    <td><span class="badge bg-warning"> Pending</span></td>
+                    <td> 19/08/2025</td>
+                    <td>
+                        <a href="/Admin/Review/4" class="btn btn-sm btn-outline-primary">
+                            Review
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+Admin Views
+
+Nia Thandolwethu Cele
+​
+Dharsh Moodley​
