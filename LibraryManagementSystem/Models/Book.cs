@@ -12,7 +12,11 @@
         public string SubmittedBy { get; set; }
         public BookStatus Status { get; set; }
         public string ReviewedBy { get; set; }
+
+        public DateTime ReviewedDate { get; set; }
         
-        public List<UploadedDocument> Documents { get; set; }
+        public List<UploadedDocument> Documents { get; set; } = new List<UploadedDocument>();
+
+        public List<BookReview> Reviews { get; set; } = new List<BookReview>();
     }
 }

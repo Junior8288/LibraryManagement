@@ -39,7 +39,7 @@ namespace LibraryManagementSystem.Controllers
         //POST: /Books/Add - Add form data to the datastore
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(Book book, List<IFormFile> documents)
+        public async Task<IActionResult> Add(List<IFormFile> documents, Book book)
         {
             try
             {
@@ -54,6 +54,8 @@ namespace LibraryManagementSystem.Controllers
                     ViewBag.Error = "Book author is required";
                     return View(book);
                 }
+
+                book.SubmittedBy = "John Librarian";
 
                 if (documents != null && documents.Count > 0)
                 {
@@ -93,7 +95,16 @@ namespace LibraryManagementSystem.Controllers
                     }
                 }
 
+                BookDataStore.AddBook(book);
+                TempData["Success"] = "Book submitted successfully";
+                return RedirectToAction(nameof(Index));
 
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Error submitting book: " + ex.Message;
+                return View(book);
             }
 
         }
@@ -114,6 +125,40 @@ namespace LibraryManagementSystem.Controllers
             {
                 TempData["Error"] = "Error loading book";
                 return RedirectToAction(nameof(Index));
+            }
+        }
+
+        public async Task<IActionResult> DownloadDocument(int bookId, int docId)
+        {
+            try
+            {
+                var book = BookDataStore.GetBookById(bookId);
+                if (book == null) { return NotFound("Book not found."); }
+
+                var document = book.Documents.FirstOrDefault(doc => doc.Id == docId);
+                if (document == null) { return NotFound("Document not found."); }
+
+                var encryptedFilePath = Path.Combine(_environment.WebRootPath, document.FilePath.TrimStart('/'));
+                if (!System.IO.File.Exists(encryptedFilePath)) return NotFound("File not found;");
+
+                var decryptedStream = await _encryptionService.DecryptFileAsync(encryptedFilePath);
+
+                var contentType = Path.GetExtension(document.FileName).ToLower()
+                    switch
+                {
+                    ".pdf" => "application/pdf",
+                    ".txt" => "application/txt",
+                    ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    _ => "application/octet-stream"
+                };
+
+                return File(decryptedStream, contentType, document.FileName);
+
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest("Error downloading file: " + ex.Message);
             }
         }
 

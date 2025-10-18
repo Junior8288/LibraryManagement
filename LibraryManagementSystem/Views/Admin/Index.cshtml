@@ -1,18 +1,53 @@
-﻿@{
+﻿@model List<LibraryManagementSystem.Models.Book>
+
+@{
     ViewData["Title"] = "Admin Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml"; //added this nav
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2> Books Awaiting Review</h2>
-    <a href="#" class="btn btn-primary">
-        Review Archive
-    </a>
+    <h2>Admin Dashboard - All Books</h2>
+    <div>
+        <span class="badge bg-warning me-2">@ViewBag.PendingCount Pending</span>
+        <span class="badge bg-success me-2">@ViewBag.ApprovedCount Approved</span>
+        <span class="badge bg-danger me-2">@ViewBag.DeclinedCount Declined</span>
+    </div>
 </div>
 
-@*Hard code - display all books*@
+<!--Filter Tabs-->
+<ul class="nav nav mb-4">
+    <li class="nav-item">
+        <a class="nav-link" @(ViewBag.Filter =="all" ? "active" : "") href="/Admin?filter=all">
+            All Books (@Model.Count)    
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" @(ViewBag.Filter =="pending" ? "active" : "") href="/Admin?filter=pending">
+            Pending (@ViewBag.PendingCount)    
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" @(ViewBag.Filter =="approved" ? "active" : "") href="/Admin?filter=approved">
+            Approved (@ViewBag.ApprovedCount)    
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" @(ViewBag.Filter =="declined" ? "active" : "") href="/Admin?filter=declined">
+            Declined (@ViewBag.DeclinedCount)    
+        </a>
+    </li>
+</ul>
+
 <div class="card">
     <div class="card-body">
+        @if (Model.Count == 0)
+        {
+            <div class="text-center py-5">
+                <p class="text-muted">No books found</p>
+            </div>
+        }
+        else
+        {
         <table class="table">
             <thead>
                 <tr>
@@ -40,60 +75,38 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td> Clean Code</td>
-                    <td> Robert Martin</td>
-                    <td> Sam D</td>
-                    <td> Programming</td>
-                    <td><span class="badge bg-warning"> Pending</span></td>
-                    <td> 19/08/2025</td>
-                    <td>
-                        <a href="/Admin/Review/1" class="btn btn-sm btn-outline-primary">
-                            Review
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td> The Bible</td>
-                    <td> God and others</td>
-                    <td> Sizwe M</td>
-                    <td> Religious Texts</td>
-                    <td><span class="badge bg-danger"> Denied</span></td>
-                    <td> 23/08/2025</td>
-                    <td>
-                        <a href="/Admin/Review/2" class="btn btn-sm btn-outline-primary">
-                            Review
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td> Design Patterns</td>
-                    <td> Gang of Four</td>
-                    <td> Nia C</td>
-                    <td> Software Engineering</td>
-                    <td><span class="badge bg-success "> Approved</span></td>
-                    <td> 16/08/2025</td>
-                    <td>
-                        <a href="/Admin/Review/3" class="btn btn-sm btn-outline-primary">
-                            Review
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td> Javascript for Dummies</td>
-                    <td> Mozilla Foundation</td>
-                    <td> Annie PC</td>
-                    <td> Web Development</td>
-                    <td><span class="badge bg-warning"> Pending</span></td>
-                    <td> 19/08/2025</td>
-                    <td>
-                        <a href="/Admin/Review/4" class="btn btn-sm btn-outline-primary">
-                            Review
-                        </a>
-                    </td>
-                </tr>
+                @foreach (var book in Model)
+                {
+                    <tr>
+                        <td><strong>@book.Title</strong></td>
+                        <td>@book.Author</td>
+                        <td>@book.SubmittedBy</td>
+                        <td>@book.Category</td>
+                        <td>
+                            @if (book.Status == LibraryManagementSystem.Models.BookStatus.Pending)
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                            else if (book.Status == LibraryManagementSystem.Models.BookStatus.Approved)
+                            {
+                                <span class="badge bg-success">Approved</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Declined</span>
+                            }
+                        </td>
+                        <td>@book.SubmittedDate.ToString("MMM dd, yyyy")</td>
+                        <td>
+                            <a href="/Admin/Review/@book.Id" class="btn btn-sm btn-primary">
+                                @(book.Status == LibraryManagementSystem.Models.BookStatus.Pending ? "Review" : "View")
+                            </a>
+                        </td>
+                    </tr>   
+                }
             </tbody>
         </table>
+        }
     </div>
 </div>
 Admin Views

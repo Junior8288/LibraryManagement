@@ -29,7 +29,19 @@ namespace LibraryManagementSystem.Data
                 Description = "A complete guide to JavaScript programming",
                 SubmittedDate = DateTime.Now.AddDays(-12),
                 Status = BookStatus.Approved,
-                Documents = new List<UploadedDocument>()
+                Documents = new List<UploadedDocument>(),
+                Reviews = new List<BookReview>
+                {
+                    new BookReview
+                    {
+                        Id = 1,
+                        BookId = 2,
+                        ReviewerName = "Admin User",
+                        ReviewerRole = "Administrator",
+                        ReviewDate = DateTime.Now.AddDays(-11),
+                        Decision = BookStatus.Approved
+                    }
+                }
 
             },
             new Book
@@ -42,12 +54,26 @@ namespace LibraryManagementSystem.Data
                 Description = "A complete guide to building C# .NET applications",
                 SubmittedDate = DateTime.Now.AddDays(-18),
                 Status = BookStatus.Declined,
-                Documents = new List<UploadedDocument>()
+                Documents = new List<UploadedDocument>(),
+                Reviews = new List<BookReview>
+                {
+                    new BookReview
+                    {
+                        Id = 2,
+                        BookId = 3,
+                        ReviewerName = "Admin User",
+                        ReviewerRole = "Administrator",
+                        ReviewDate = DateTime.Now.AddDays(-11),
+                        Decision = BookStatus.Declined,
+                        Comments = "Missing proper supporting documentation. Please add table of contents and sample chapters."
+                    }
+                }
 
             }
         };
 
         private static int _nextId = 4;
+        private static int _nextReviewId = 3;
 
         public static List<Book> GetAllBooks() => _books.ToList();
 
@@ -63,6 +89,34 @@ namespace LibraryManagementSystem.Data
             book.SubmittedDate = DateTime.Now;
             book.Status = BookStatus.Pending;
             _books.Add(book);
+        }
+
+        public static bool UpdateBookStatus(int id, BookStatus newStatus, string reviewedBy, string comments)
+        {
+            var book = GetBookById(id);
+            if (book == null) return false;
+
+            // CREATE REVIEW RECORD
+            var review = new BookReview
+            {
+                Id = _nextReviewId,
+                BookId = id,
+                ReviewerName = reviewedBy,
+                ReviewerRole = "Administrator",
+                ReviewDate = DateTime.Now,
+                Decision = newStatus,
+                Comments = comments
+            };
+            _nextReviewId++;
+
+            book.Reviews.Add(review);
+
+            // UPDATE BOOK STATUS
+            book.Status = newStatus;
+            book.ReviewedBy = reviewedBy;
+            book.ReviewedDate = DateTime.Now;
+
+            return true;
         }
 
         public static int GetPendingCount() => _books.Count(b => b.Status == BookStatus.Pending);

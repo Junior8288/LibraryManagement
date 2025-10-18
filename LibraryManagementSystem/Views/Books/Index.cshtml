@@ -10,6 +10,19 @@
 	<a href="/Books/Add" class="btn btn-primary"> + Add New Book </a>
 </div>
 
+@if (TempData["Success"] != null)
+{
+	<div class="alert alert-success alert-dismissible fade show">
+		@TempData["Success"]
+		<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+	</div>
+}
+
+@if (TempData["Error"] != null)
+{
+	<div class = "alert alert-danger">@TempData["Error"]</div>
+}
+
 <!--Books Table-->
 <div class="card">
 	<div class="card-body">

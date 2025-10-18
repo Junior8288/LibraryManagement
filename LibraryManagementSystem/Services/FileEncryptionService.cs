@@ -5,8 +5,9 @@ namespace LibraryManagementSystem.Services
 {
     public class FileEncryptionService
     {
-        private static readonly byte[] Key = Encoding.UTF8.GetBytes("MySecretKey1234MySecretKey1234");
-        private static readonly byte[] IV = Encoding.UTF8.GetBytes("MyInitVector16b");
+        private static readonly byte[] Key = Encoding.UTF8.GetBytes("MySecretKey1234MySecretKey1234!!"); // 32 chars
+        private static readonly byte[] IV = Encoding.UTF8.GetBytes("MyInitVector16!!"); // 16 chars
+
 
         public async Task EncryptFileAsync( Stream input, string outputPath )
         {
