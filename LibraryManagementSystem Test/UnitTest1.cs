@@ -3,6 +3,7 @@ using LibraryManagementSystem.Services;
 using LibraryManagementSystem.Data;
 using LibraryManagementSystem.Models;
 using System.Text;
+using System.Security.Cryptography.X509Certificates;
 
 namespace LibraryManagementSystem_Test
 {
@@ -71,6 +72,81 @@ namespace LibraryManagementSystem_Test
             {
                 if (File.Exists(tempFile)) File.Delete(tempFile);    
             }
+        }
+
+        [Fact]
+        public async Task Test3_DeryptFile_Successful()
+        {
+            //Create and encrypt the file
+            var originalContent = "This is a secret document";
+            var inputStream = new MemoryStream(Encoding.UTF8.GetBytes(originalContent));
+            var tempFile = Path.GetTempFileName();
+            var encryptionService = new FileEncryptionService();
+
+            try
+            {
+                await encryptionService.EncryptFileAsync(inputStream, tempFile);
+
+                //Decrypt
+                var decryptedStream = await encryptionService.DecryptFileAsync(tempFile);
+                var decryptedContent =  Encoding.UTF8.GetString(decryptedStream.ToArray());
+
+                //Verfiy decrypted content matched the original
+                Assert.Equal(originalContent, decryptedContent);
+                Assert.Contains(originalContent, decryptedContent);
+            }
+            finally
+            {
+                               if (File.Exists(tempFile)) File.Delete(tempFile);
+            }
+  
+        }
+
+        [Fact]
+        public void Test4_ApproveBook()
+        {
+            var newBook = new Book
+            {
+                Title = "Book to Approve",
+                Author = "Author Name",
+                SubmittedBy = "Librarian",
+                Status = BookStatus.Pending
+            };
+
+            BookDataStore.AddBook(newBook);
+
+            //Action : Approve the book
+            var success = BookDataStore.UpdateBookStatus(newBook.Id, BookStatus.Approved, "Admin User",  "Looks good");
+
+            Assert.True(success, "Book status update should be successful");
+
+            var updatedBook = BookDataStore.GetBookById(newBook.Id);
+            Assert.Equal(BookStatus.Approved, updatedBook.Status);
+            Assert.Equal("Admin User", updatedBook.ReviewedBy);
+        }
+
+        [Fact]
+        public void Test5_DeclineBook()
+        {
+            var newBook = new Book
+            {
+                Title = "Test Driven Development",
+                Author = "Test Author",
+                Category = "Software Engineering",
+                ISBN = "123-456-7890",
+                Description = "A book about TDD practices",
+                SubmittedBy = "Test User",
+            };
+            BookDataStore.AddBook(newBook);
+
+            var success = BookDataStore.UpdateBookStatus(newBook.Id, BookStatus.Declined, "Admin User", "Insufficient documentation");
+
+            Assert.True(success, "Book status update should be successful");
+
+            var updatedBook = BookDataStore.GetBookById(newBook.Id);
+            Assert.Equal(BookStatus.Declined, updatedBook.Status);
+            Assert.Equal("Admin User", updatedBook.ReviewedBy);
+            Assert.NotNull(updatedBook.ReviewedDate);
         }
     }
 }
