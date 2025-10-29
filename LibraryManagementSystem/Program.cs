@@ -1,3 +1,6 @@
+using LibraryManagementSystem.Context;
+using LibraryManagementSystem.Services;
+using Microsoft.EntityFrameworkCore;
 namespace LibraryManagementSystem
 {
     public class Program
@@ -8,6 +11,31 @@ namespace LibraryManagementSystem
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromSeconds(5);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.Cookie.Name = "LibraryManagement Session";
+            });
+
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddHttpClient<AuthService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7002");
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
+
+            builder.Services.AddDbContext<LibraryDbContext>(option =>
+            {
+                option.UseSqlServer(
+                    builder.Configuration.GetConnectionString("DefaultConnection"),
+                    sqlOptions => sqlOptions.EnableRetryOnFailure());
+            });
+
+            builder.Services.AddScoped<FileEncryptionService>
+
 
             var app = builder.Build();
 
